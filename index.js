@@ -83,6 +83,37 @@ async function run() {
             res.send(result);
         });
 
+        // get specific bills
+
+        app.get('/my-bills/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) };
+            const result = await myBillCollection.findOne(query);
+            res.send(result);
+        });
+
+
+        // UPDATE BILL USING PATCH
+        app.patch('/my-bills/:id', async (req, res) => {
+            const id = req.params.id;
+            const updateBill = req.body;
+            const query = { _id: new ObjectId(id) };
+            const update = {
+                $set: {
+                    userName: updateBill.userName,
+                    email: updateBill.email,
+                    amount: updateBill.amount,
+                    address: updateBill.address,
+                    phone: updateBill.phone,
+                    date: updateBill.date,
+                }
+            }
+            const option = {};
+            const result = await myBillCollection.updateOne(query, update, option);
+            res.send(result);
+        })
+
+
         await client.db("admin").command({ ping: 1 });
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
     }
