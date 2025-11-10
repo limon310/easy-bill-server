@@ -53,7 +53,7 @@ async function run() {
         })
 
         // search by category
-        app.get('/search', async(req, res) => {
+        app.get('/search', async (req, res) => {
             const search = req.query.search;
             const query = { category: { $regex: search, $options: "i" } };
             const cursor = billCollection.find(query);
@@ -62,11 +62,26 @@ async function run() {
         })
 
         // post
-        app.post('/my-bill', async(req, res)=>{
+        app.post('/my-bill', async (req, res) => {
             const newBill = req.body;
             const result = await myBillCollection.insertOne(newBill);
             res.send(result);
         })
+
+        // find my bills using email
+
+        app.get('/my-bills', async (req, res) => {
+            const email = req.query.email;
+            const query = {};
+
+            if (email) {
+                query.email = email;
+            }
+
+            const cursor = myBillCollection.find(query);
+            const result = await cursor.toArray();
+            res.send(result);
+        });
 
         await client.db("admin").command({ ping: 1 });
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
