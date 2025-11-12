@@ -37,6 +37,16 @@ async function run() {
             res.send(result);
         })
 
+        // category bills
+
+        app.get('/category-bills', async (req, res) => {
+            const query = { category: { $in: ["Electricity", "Gas", "Water", "Internet"] } };
+            const cursor = billCollection.find(query).limit(4);
+            const result = await cursor.toArray();
+            res.send(result);
+        });
+
+
         // recent bills
         app.get('/recent-bills', async (req, res) => {
             const cursor = billCollection.find().sort({ date: -1 }).limit(6);
@@ -115,9 +125,9 @@ async function run() {
 
 
         // delete bills
-        app.delete('/my-bills/:id', async(req, res) =>{
+        app.delete('/my-bills/:id', async (req, res) => {
             const id = req.params.id;
-            const query = {_id: new ObjectId(id)};
+            const query = { _id: new ObjectId(id) };
             const result = await myBillCollection.deleteOne(query);
             res.send(result);
         })
