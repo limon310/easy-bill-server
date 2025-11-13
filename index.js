@@ -132,6 +132,25 @@ async function run() {
             res.send(result);
         })
 
+        // total paid bills
+        app.get('/total-paid', async (req, res) => {
+            const { email } = req.query;
+
+            if (!email) {
+                return res.status(400).send({ message: "Email is required" });
+            }
+            const query ={email: email}
+            const bills = await myBillCollection.find(query).toArray();
+
+            let total = 0;
+            bills.forEach(bill => {
+                total += Number(bill.amount);
+            });
+
+            res.send({ email, totalPaid: total });
+        });
+
+
 
         await client.db("admin").command({ ping: 1 });
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
